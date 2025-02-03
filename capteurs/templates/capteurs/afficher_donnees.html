@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Données des Capteurs</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Données des Capteurs</h1>
+        <a href="{% url 'home' %}" class="btn btn-secondary mb-3">Retour à l'accueil</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date et Heure</th>
+                    <th>Température (°C)</th>
+                    <th>Humidité (%)</th>
+                    <th>Pression (hPa)</th>
+                    <th>Qualité de l'Air</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for donnee in donnees %}
+                <tr>
+                    <td>{{ donnee.date_heure }}</td>
+                    <td>{{ donnee.temperature }}</td>
+                    <td>{{ donnee.humidite }}</td>
+                    <td>{{ donnee.pression }}</td>
+                    <td>{{ donnee.qualite_air }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS (optionnel) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
