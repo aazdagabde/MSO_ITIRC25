@@ -85,3 +85,23 @@ USE_TZ = True
 # Fichiers statiques
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+########################
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'votre.email@gmail.com'
+EMAIL_HOST_PASSWORD = 'votre_mot_de_passe'
+DEFAULT_FROM_EMAIL = 'votre.email@gmail.com'
+ALERT_EMAIL = 'destinataire.alertes@gmail.com'
+#######################
+CELERY_BEAT_SCHEDULE = {
+    'retrain-model-every-hour': {
+        'task': 'capteurs.tasks.retrain_model',
+        'schedule': 3600.0,  # toutes les 3600 secondes (1 heure)
+    },
+    'check-anomalies-every-30-minutes': {
+        'task': 'capteurs.tasks.check_anomalies_and_send_alerts',
+        'schedule': 1800.0,  # toutes les 1800 secondes (30 minutes)
+    },
+}
