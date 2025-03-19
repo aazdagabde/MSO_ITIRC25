@@ -9,6 +9,7 @@ from .views import (
     dernieres_valeurs,
     predict_weather,
     DonneesCapteurListCreate,
+    api_reception_donnees,
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path('dernieres_valeurs/', dernieres_valeurs, name='dernieres_valeurs'),
     path('predictions/', predict_weather, name='predict_climate'),
     path('api/donnees/', DonneesCapteurListCreate.as_view(), name='donnees-capteur-list'),
+    path('api/reception-esp/', api_reception_donnees, name='api_reception_esp'),
 ]

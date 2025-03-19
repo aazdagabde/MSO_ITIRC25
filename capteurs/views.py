@@ -1,129 +1,119 @@
 import json
 import datetime
+import os
+import pickle
+import numpy as np
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import render
+from django.utils import timezone
+from rest_framework import generics, status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from sklearn.preprocessing import StandardScaler
 from .models import DonneesCapteur
-from rest_framework import generics
 from .serializers import DonneesCapteurSerializer
 
+# Chemins vers les modèles ML
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+WEATHER_MODEL_PATH = os.path.join(BASE_DIR, 'models', 'weather_model.pkl')
+ANOMALY_MODEL_PATH = os.path.join(BASE_DIR, 'models', 'anomaly_model.pkl')
+
+# Chargement des modèles
+with open(WEATHER_MODEL_PATH, 'rb') as f:
+    weather_model = pickle.load(f)
+
+with open(ANOMALY_MODEL_PATH, 'rb') as f:
+    anomaly_data = pickle.load(f)
+    anomaly_model = anomaly_data['model']
+    scaler = anomaly_data['scaler']
+
+# Page d'accueil
 def home(request):
     return render(request, 'capteurs/home.html')
 
-class DonneesCapteurListCreate(generics.ListCreateAPIView):
-    queryset = DonneesCapteur.objects.all()
-    serializer_class = DonneesCapteurSerializer
+# API REST pour ESP8266
+@api_view(['POST'])
+def api_reception_donnees(request):
+    serializer = DonneesCapteurSerializer(data=request.data)
+    if serializer.is_valid():
+        donnees = serializer.save()
 
+        X = np.array([[donnees.temperature, donnees.humidite, donnees.pression, donnees.qualite_air]])
+        X_scaled = scaler.transform(X)
+
+        pluie = bool(weather_model.predict(X)[0])
+        anomalie = anomaly_model.predict(X_scaled)[0] == -1
+
+        return Response({"pluie": pluie, "anomalie": anomalie}, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Affichage des données
 def afficher_donnees(request):
     qs = DonneesCapteur.objects.all().order_by('-date_heure')
-    donnees_list = list(qs.values('date_heure', 'temperature', 'humidite', 'pression', 'qualite_air'))
-    donnees_json = json.dumps(donnees_list, cls=DjangoJSONEncoder)
-    return render(request, 'capteurs/afficher_donnees.html', {
-        'donnees': qs,
-        'donnees_json': donnees_json,
-    })
+    donnees_json = json.dumps(list(qs.values()), cls=DjangoJSONEncoder)
+    return render(request, 'capteurs/afficher_donnees.html', {'donnees_json': donnees_json})
 
 def charts_temperature(request):
     qs = DonneesCapteur.objects.all().order_by('-date_heure')
-    donnees_list = list(qs.values('date_heure', 'temperature'))
-    donnees_json = json.dumps(donnees_list, cls=DjangoJSONEncoder)
-    return render(request, 'capteurs/charts_temperature.html', {
-        'donnees_json': donnees_json,
-    })
+    donnees_json = json.dumps(list(qs.values('date_heure', 'temperature')), cls=DjangoJSONEncoder)
+    return render(request, 'capteurs/charts_temperature.html', {'donnees_json': donnees_json})
 
 def charts_humidite(request):
     qs = DonneesCapteur.objects.all().order_by('-date_heure')
-    donnees_list = list(qs.values('date_heure', 'humidite'))
-    donnees_json = json.dumps(donnees_list, cls=DjangoJSONEncoder)
-    return render(request, 'capteurs/charts_humidite.html', {
-        'donnees_json': donnees_json,
-    })
+    donnees_json = json.dumps(list(qs.values('date_heure', 'humidite')), cls=DjangoJSONEncoder)
+    return render(request, 'capteurs/charts_humidite.html', {'donnees_json': donnees_json})
 
 def charts_pression(request):
     qs = DonneesCapteur.objects.all().order_by('-date_heure')
-    donnees_list = list(qs.values('date_heure', 'pression'))
-    donnees_json = json.dumps(donnees_list, cls=DjangoJSONEncoder)
-    return render(request, 'capteurs/charts_pression.html', {
-        'donnees_json': donnees_json,
-    })
+    donnees_json = json.dumps(list(qs.values('date_heure', 'pression')), cls=DjangoJSONEncoder)
+    return render(request, 'capteurs/charts_pression.html', {'donnees_json': donnees_json})
 
 def charts_airquality(request):
     qs = DonneesCapteur.objects.all().order_by('-date_heure')
-    donnees_list = list(qs.values('date_heure', 'qualite_air'))
-    donnees_json = json.dumps(donnees_list, cls=DjangoJSONEncoder)
-    return render(request, 'capteurs/charts_airquality.html', {
-        'donnees_json': donnees_json,
-    })
+    donnees_json = json.dumps(list(qs.values('date_heure', 'qualite_air')), cls=DjangoJSONEncoder)
+    return render(request, 'capteurs/charts_airquality.html', {'donnees_json': donnees_json})
 
 def dernieres_valeurs(request):
     try:
         derniere_donnee = DonneesCapteur.objects.latest('date_heure')
     except DonneesCapteur.DoesNotExist:
         derniere_donnee = None
-    if derniere_donnee:
-        time_passed = datetime.datetime.now(datetime.timezone.utc) - derniere_donnee.date_heure
-    else:
-        time_passed = None
+    time_passed = timezone.now() - derniere_donnee.date_heure if derniere_donnee else None
     return render(request, 'capteurs/dernieres_valeurs.html', {
         'derniere_donnee': derniere_donnee,
         'time_passed': time_passed,
     })
-#######################
-import os
-import pickle
-import numpy as np
-import datetime
-from django.shortcuts import render
-from .models import DonneesCapteur
 
-
+# Prédictions météo et anomalies
 def predict_weather(request):
-    BASE_DIR = os.path.dirname(__file__)
-    WEATHER_MODEL_PATH = os.path.join(BASE_DIR, 'models', 'weather_model.pkl')
-    ANOMALY_MODEL_PATH = os.path.join(BASE_DIR, 'models', 'anomaly_model.pkl')
-
-
-
-    # Charger le modèle de prédiction pluie
     try:
-        with open(WEATHER_MODEL_PATH, 'rb') as f:
-            weather_model = pickle.load(f)
+        qs = DonneesCapteur.objects.all().order_by('-date_heure')[:100]
+        if not qs:
+            raise ValueError("Aucune donnée disponible")
+
+        X = np.array([[d.temperature, d.humidite, d.pression, d.qualite_air] for d in reversed(qs)])
+        X_scaled = scaler.transform(X)
+
+        predictions_pluie = weather_model.predict(X)
+        anomalies = anomaly_model.predict(X_scaled)
+
+        results = [{
+            'date_heure': d.date_heure,
+            'temperature': d.temperature,
+            'humidite': d.humidite,
+            'pression': d.pression,
+            'qualite_air': d.qualite_air,
+            'pluie_predite': "Pluie" if pluie == 1 else "Pas de pluie",
+            'anomalie': anomalie == -1
+        } for d, pluie, anomalie in zip(reversed(qs), predictions_pluie, anomalies)]
+
+        context = {'results': results, 'generated_at': timezone.now()}
+        return render(request, 'capteurs/predictions.html', context)
+
     except Exception as e:
-        return render(request, 'capteurs/predictions.html', {'error': "Modèle de prédiction pluie introuvable."})
+        return render(request, 'capteurs/predictions.html', {'error': str(e)})
 
-    # Charger le modèle d'anomalies
-    try:
-        with open(ANOMALY_MODEL_PATH, 'rb') as f:
-            anomaly_model = pickle.load(f)
-    except Exception as e:
-        return render(request, 'capteurs/predictions.html', {'error': "Modèle d'anomalies introuvable."})
-
-    # Récupérer les 100 dernières mesures, du plus ancien au plus récent
-    qs = DonneesCapteur.objects.all().order_by('-date_heure')[:100]
-    if not qs:
-        return render(request, 'capteurs/predictions.html', {'error': "Aucune donnée disponible."})
-    qs_list = list(qs)[::-1]
-
-    # Préparer les données pour la prédiction pluie
-    X = np.array([[record.temperature, record.humidite, record.pression, record.qualite_air] for record in qs_list])
-    predictions_pluie = weather_model.predict(X)
-
-    # Détection d'anomalies sur l'ensemble des mesures
-    anomalies = anomaly_model.predict(X)  # -1 indique une anomalie
-
-    results = []
-    for i, record in enumerate(qs_list):
-        results.append({
-            'date_heure': record.date_heure,
-            'temperature': record.temperature,
-            'humidite': record.humidite,
-            'pression': record.pression,
-            'qualite_air': record.qualite_air,
-            'pluie_predite': "Pluie" if predictions_pluie[i] == 1 else "Pas de pluie",
-            'anomalie': anomalies[i] == -1
-        })
-
-    context = {
-        'results': results,
-        'generated_at': datetime.datetime.now()
-    }
-    return render(request, 'capteurs/predictions.html', context)
+class DonneesCapteurListCreate(generics.ListCreateAPIView):
+    queryset = DonneesCapteur.objects.all()
+    serializer_class = DonneesCapteurSerializer

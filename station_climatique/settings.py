@@ -90,10 +90,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'votre.email@gmail.com'
-EMAIL_HOST_PASSWORD = 'votre_mot_de_passe'
-DEFAULT_FROM_EMAIL = 'votre.email@gmail.com'
-ALERT_EMAIL = 'destinataire.alertes@gmail.com'
+EMAIL_HOST_USER = 'aazdagbousslama@gmail.com'
+EMAIL_HOST_PASSWORD = 'rznj cmub mwye fodd'
+DEFAULT_FROM_EMAIL = 'aazdagbousslama@gmail.com'
+ALERT_EMAIL = 'aazdagbousslama@gmail.com'
 #######################
 CELERY_BEAT_SCHEDULE = {
     'retrain-model-every-hour': {
@@ -105,3 +105,7 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 1800.0,  # toutes les 1800 secondes (30 minutes)
     },
 }
+ALERT_EMAIL = "aazdagbousslama@gmail.com"
+DEFAULT_FROM_EMAIL = "aazdagbousslama@gmail.com"
+TELEGRAM_BOT_TOKEN = "7852205995:AAHeF8A_WPbY4rfSYmfgZc3OSc_OSTbOues"
+TELEGRAM_CHAT_ID = "5622689672"  # ID du groupe ou de la personne
