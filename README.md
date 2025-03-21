@@ -9,8 +9,8 @@ Ce projet consiste en la réalisation d'une maquette IoT dédiée à la surveill
 - **Stockage et analyse des données** : utilisation d'algorithmes Machine Learning pour analyser, prédire les données climatiques futures et détecter des anomalies.
 - **Visualisation graphique** : représentations graphiques interactives des données collectées et traitées.
 - **Alertes automatisées** : notifications par e-mail, Telegram et WhatsApp en cas de valeurs climatiques anormales.
-- **Gestion des utilisateurs** : système complet d'authentification et gestion des droits utilisateurs.
-- **Génération de rapports PDF** : génération automatique de rapports d'historique climatique en PDF.
+- **Gestion des utilisateurs** : système complet d'authentification et gestion des droits utilisateurs (en cours) .
+- **Génération de rapports PDF** : génération automatique de rapports d'historique climatique en PDF (en cours).
 
 ## Technologies utilisées
 - **Matériel :** ESP8266, DHT11
