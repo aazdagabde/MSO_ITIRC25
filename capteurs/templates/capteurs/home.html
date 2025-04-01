@@ -3,50 +3,493 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Station Climatique - Accueil</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Maquette Maison des Sciences - Surveillance du Climat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* Styles CSS */
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap');
+
+        :root {
+            --green: #0d9979;
+            --dark: #333;
+            --light: #f4f4f4;
+        }
+
+        * {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-transform: capitalize;
+            text-decoration: none;
+            transition: all .5s cubic-bezier(.37,1.14,.26,1.24);
+        }
+
+        *::selection {
+            background: var(--green);
+            color: #fff;
+        }
+
+        html {
+            font-size: 62.5%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: var(--light);
+        }
+
+        .btn {
+            height: 3.5rem;
+            width: 15rem;
+            background: none;
+            outline: none;
+            border: .2rem solid var(--green);
+            color: var(--green);
+            font-size: 2rem;
+            margin: 1rem 0;
+            cursor: pointer;
+            overflow: hidden;
+            z-index: 0;
+            position: relative;
+        }
+
+        .btn::before, .btn::after {
+            position: absolute;
+            content: '';
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: var(--green);
+            z-index: -1;
+            transition: all 0.5s cubic-bezier(.37,1.14,.26,1.24);
+        }
+
+        .btn::before {
+            clip-path: polygon(0 0, 0 0, 0 0);
+        }
+
+        .btn:hover:before {
+            clip-path: polygon(0 0, 0 100%, 100% 0);
+        }
+
+        .btn::after {
+            clip-path: polygon(100% 100%, 100% 100%, 100% 100%);
+        }
+
+        .btn:hover:after {
+            clip-path: polygon(100% 0%, 0% 100%, 100% 100%);
+        }
+
+        .btn:hover {
+            color: #fff;
+        }
+
+        .heading {
+            text-align: center;
+            font-size: 4rem;
+            color: var(--dark);
+            padding: 1rem;
+            padding-top: 7rem;
+        }
+
+        .heading i {
+            color: var(--green);
+            font-size: 2rem;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            box-shadow: 0 .1rem .3rem rgba(0,0,0,.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 1rem 5rem;
+            width: 100%;
+        }
+
+        header .logo {
+            color: var(--green);
+            font-size: 3rem;
+        }
+
+        header .navbar ul {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+        }
+
+        header .navbar ul li {
+            margin: 0 1rem;
+        }
+
+        header .navbar ul li a {
+            font-size: 2rem;
+            color: #666;
+        }
+
+        header .navbar ul li a:hover {
+            color: var(--green);
+        }
+
+        header .fa-bars {
+            font-size: 3rem;
+            color: #666;
+            cursor: pointer;
+            display: none;
+        }
+
+        .home {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url(images/home-bg.jpg) no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .home .content {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .home .content h1 {
+            font-size: 7rem;
+            color: var(--green);
+            animation: fadeInDown 2s ease-in-out;
+        }
+
+        .home .content p {
+            font-size: 1.9rem;
+            color: var(--dark);
+            padding: 1rem 0;
+            width: 70rem;
+            animation: fadeInUp 2s ease-in-out;
+        }
+
+        .about, .features, .team, .about-us {
+            padding: 2rem 9%;
+        }
+
+        .about .row, .features .box-container, .team .box-container, .about-us .box-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .about .row .image, .features .box-container .box, .team .box-container .box, .about-us .box-container .box {
+            flex: 1 1 30rem;
+            text-align: center;
+        }
+
+        .about .row .image img, .features .box-container .box img, .team .box-container .box img, .about-us .box-container .box img {
+            width: 100%;
+            border-radius: 1rem;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .about .row .content, .features .box-container .box h3, .team .box-container .box h3, .about-us .box-container .box h3 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            animation: fadeInUp 2s ease-in-out;
+        }
+
+        .about .row .content p, .features .box-container .box p, .team .box-container .box p, .about-us .box-container .box p {
+            font-size: 1.5rem;
+            color: #666;
+            padding: 1rem 0;
+            animation: fadeInUp 2s ease-in-out;
+        }
+
+        .features .box-container .box {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 .3rem .5rem rgba(0,0,0,.1);
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .team .box-container .box {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 .3rem .5rem rgba(0,0,0,.1);
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .team .box-container .box img {
+            width: 15rem;
+            height: 15rem;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .about-us .box-container .box {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 .3rem .5rem rgba(0,0,0,.1);
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .footer {
+            background: var(--dark);
+            padding: 2rem 9%;
+            text-align: center;
+        }
+
+        .footer .credit {
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .footer .credit span {
+            color: var(--green);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 55%;
+            }
+
+            header .fa-bars {
+                display: block;
+            }
+
+            header .navbar {
+                position: fixed;
+                top: -100rem;
+                left: 0;
+                width: 100%;
+                border-top: .1rem solid #ccc;
+                opacity: 0;
+            }
+
+            header .navbar ul {
+                flex-flow: column;
+                padding: 2rem 0;
+                background-color: #fff;
+            }
+
+            header .navbar ul li {
+                width: 100%;
+                text-align: center;
+                margin: 1rem 0;
+            }
+
+            header .navbar ul li a {
+                font-size: 3rem;
+                display: block;
+            }
+
+            .fa-times {
+                transform: rotate(180deg);
+            }
+
+            header .nav-toggle {
+                top: 6rem;
+                opacity: 1;
+            }
+
+            .home .content h1 {
+                font-size: 5rem;
+            }
+
+            .home .content p {
+                width: auto;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .donate .form-container form .inputBox input, select {
+                width: 100%;
+            }
+
+            .donate .form-container form {
+                width: 90%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">Station Climatique</h1>
-        <p class="lead text-center">
-            Bienvenue sur la page d'accueil de la station climatique. Cette maquette permet de surveiller les conditions environnementales en temps réel.
-        </p>
+    <!-- Header Section -->
+    <header>
+        <a href="#" class="logo"><i class="fas fa-seedling"></i>Maison des Sciences</a>
+        <nav class="navbar">
+            <ul>
+                <li><a href="#home">Accueil</a></li>
+                <li><a href="#about">Maquette</a></li>
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#team">Équipe</a></li>
+                <li><a href="#about-us">À propos</a></li>
+            </ul>
+        </nav>
+        <div class="fas fa-bars"></div>
+    </header>
 
-        <div class="row mt-5">
-            <div class="col-md-6">
-                <h2>À propos de la maquette</h2>
-                <p>
-                    La maquette est équipée de plusieurs capteurs pour mesurer :
-                </p>
-                <ul>
-                    <li>Température et humidité (DHT11)</li>
-                    <li>Pression atmosphérique (BMP280/BME280)</li>
-                    <li>Qualité de l'air (MQ135)</li>
-                </ul>
-                <p>
-                    Les données sont collectées par un ESP32 et transmises à cette application web via une API REST.
-                </p>
+    <!-- Home Section -->
+    <section class="home" id="home">
+        <div class="content">
+            <h1>Surveillance du Climat</h1>
+            <p>Découvrez notre système intelligent de surveillance climatique basé sur les technologies IoT et IA.</p>
+            <a href="#about"><button class="btn">Explorer</button></a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <h1 class="heading"> <i class="fas fa-quote-left"></i> Notre Maquette <i class="fas fa-quote-right"></i> </h1>
+        <div class="row">
+            <div class="image">
+                <img src="images/maquette.jpg" alt="Maquette">
             </div>
-            <div class="col-md-6">
-                <h2>Fonctionnalités</h2>
-                <ul>
-                    <li>Affichage en temps réel des données des capteurs.</li>
-                    <li>Visualisation des données sous forme de graphiques.</li>
-                    <li>Interface utilisateur intuitive et responsive.</li>
-                </ul>
+            <div class="content">
+                <h3>Maquette de Surveillance Climatique</h3>
+                <p>Réalisée par des élèves ingénieurs de l'ENSA Oujda, filière ITIRC, cette maquette illustre l'utilisation des technologies IoT pour la collecte et l'analyse des données environnementales. Elle intègre des capteurs de température, d'humidité, de pression atmosphérique et de qualité de l'air, connectés à un microcontrôleur ESP32.</p>
+                <a href="#features"><button class="btn">Voir les fonctionnalités</button></a>
             </div>
         </div>
+    </section>
 
-        <div class="text-center mt-5">
-            <a href="{% url 'dernieres_valeurs' %}" class="btn btn-primary btn-lg">
-                Accéder aux valeurs des capteurs
-            </a>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h1 class="heading"> <i class="fas fa-quote-left"></i> Fonctionnalités <i class="fas fa-quote-right"></i> </h1>
+        <div class="box-container">
+            <div class="box">
+                <img src="images/feature1.jpg" alt="Feature 1">
+                <h3>Collecte de Données</h3>
+                <p>Collecte en temps réel des données climatiques via des capteurs IoT.</p>
+            </div>
+            <div class="box">
+                <img src="images/feature2.jpg" alt="Feature 2">
+                <h3>Analyse en Temps Réel</h3>
+                <p>Analyse des données avec détection d'anomalies et alertes automatiques.</p>
+            </div>
+            <div class="box">
+                <img src="images/feature3.jpg" alt="Feature 3">
+                <h3>Visualisation Interactive</h3>
+                <p>Interface web conviviale pour la visualisation des données.</p>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Bootstrap JS (optionnel, pour les fonctionnalités interactives) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Team Section -->
+    <section class="team" id="team">
+        <h1 class="heading"> <i class="fas fa-quote-left"></i> Notre Équipe <i class="fas fa-quote-right"></i> </h1>
+        <div class="box-container">
+            <div class="box">
+                <img src="images/abdellah.jpg" alt="Abdellah">
+                <h3>Abdellah</h3>
+                <p>Responsable du projet</p>
+            </div>
+            <div class="box">
+                <img src="images/nouhayla.jpg" alt="Nouhayla">
+                <h3>Nouhayla</h3>
+                <p>Développeuse IoT</p>
+            </div>
+            <div class="box">
+                <img src="images/soumaya.jpg" alt="Soumaya">
+                <h3>Soumaya</h3>
+                <p>Designer UI/UX</p>
+            </div>
+            <div class="box">
+                <img src="images/salma.jpg" alt="Salma">
+                <h3>Salma</h3>
+                <p>Développeuse Backend</p>
+            </div>
+            <div class="box">
+                <img src="images/asmae.jpg" alt="Asmae">
+                <h3>Asmae</h3>
+                <p>Développeuse Frontend</p>
+            </div>
+            <div class="box">
+                <img src="images/achraf.jpg" alt="Achraf">
+                <h3>Achraf</h3>
+                <p>Responsable Hardware</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="about-us" id="about-us">
+        <h1 class="heading"> <i class="fas fa-quote-left"></i> À propos de nous <i class="fas fa-quote-right"></i> </h1>
+        <div class="box-container">
+            <div class="box">
+                <img src="images/itirc-logo.png" alt="ITIRC Logo">
+                <h3>Club ITIRC</h3>
+                <p>Le club ITIRC de l'ENSA Oujda est un club étudiant dédié à l'innovation technologique et à la recherche en informatique.</p>
+            </div>
+            <div class="box">
+                <img src="images/maison-sciences-logo.png" alt="Maison des Sciences Logo">
+                <h3>Maison des Sciences</h3>
+                <p>La Maison des Sciences de l'Oriental est un espace dédié à la promotion de la science et de l'innovation dans la région.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <section class="footer">
+        <div class="credit">
+            Créé par <span>Club ITIRC & Maison des Sciences</span> | Tous droits réservés.
+        </div>
+    </section>
+
+    <!-- JavaScript -->
+    <script>
+        let menu = document.querySelector('.fa-bars');
+        let navbar = document.querySelector('.navbar');
+
+        menu.addEventListener('click', function() {
+            menu.classList.toggle('fa-times');
+            navbar.classList.toggle('nav-toggle');
+        });
+
+        window.addEventListener('scroll', () => {
+            menu.classList.remove('fa-times');
+            navbar.classList.remove('nav-toggle');
+        });
+    </script>
 </body>
 </html>

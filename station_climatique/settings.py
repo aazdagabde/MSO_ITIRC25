@@ -109,3 +109,5 @@ ALERT_EMAIL = "aazdagbousslama@gmail.com"
 DEFAULT_FROM_EMAIL = "aazdagbousslama@gmail.com"
 TELEGRAM_BOT_TOKEN = "7852205995:AAHeF8A_WPbY4rfSYmfgZc3OSc_OSTbOues"
 TELEGRAM_CHAT_ID = "5622689672"  # ID du groupe ou de la personne
+ML_API_URL = "http://127.0.0.1:8001/predict"
+
